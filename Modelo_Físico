@@ -1,0 +1,190 @@
+
+01 - CRIAR O BANCO DE DADOS
+
+CREATE DATABASE StreamingPlay
+
+
+##################################### CRIAÇÃO DE TABELAS 
+1 - PLANOS 
+
+CREATE TABLE planos (
+    id_plano INT PRIMARY KEY,
+    nome_plano VARCHAR(50) NOT NULL,
+    preco_mensal DECIMAL(10, 2) NOT NULL,
+    resolucao VARCHAR(50) NOT NULL,
+    num_telas INT NOT NULL
+    descricao TEXT
+);
+
+2 - SERIES
+
+CREATE TABLE series (
+    id_serie INT PRIMARY KEY,
+    titulo VARCHAR(200) NOT NULL,
+    ano_lancamento INT NOT NULL,
+    genero VARCHAR(100),
+    classificacao VARCHAR(10)
+);
+
+
+3 - FILMES
+
+CREATE TABLE filmes (
+    id_filme INT PRIMARY KEY,
+    titulo VARCHAR(200) NOT NULL,
+	duracao INT NOT NULL,
+    ano_lancamento INT NOT NULL,
+    genero VARCHAR(100),
+    classificacao VARCHAR(10)
+);
+
+
+4 - USUARIOS
+
+CREATE TABLE usuarios (
+    id_usuario INT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+	senha VARCHAR(32) NOT NULL,
+	data_nasc DATE NOT NULL,
+    data_registro DATE NOT NULL,
+    id_plano INT,
+    FOREIGN KEY (id_plano) REFERENCES planos(id_plano)
+);
+
+5 - PAGAMENTOS
+
+CREATE TABLE pagamentos (
+    id_pagamento INT PRIMARY KEY,
+    id_usuario INT,
+	valor_pagamento DECIMAL(10, 2) NOT NULL,
+    data_pagamento DATETIME NOT NULL,
+    metodo_pagamento VARCHAR(50) NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+);
+
+
+6 - EPSODIOS
+CREATE TABLE episodios (
+    id_episodio INT PRIMARY KEY,
+    id_serie INT,
+    titulo VARCHAR(200) NOT NULL,
+    temporada INT NOT NULL,
+	numero_epsodio INT NOT NULL,
+	duracao INT NOT NULL,
+    FOREIGN KEY (id_serie) REFERENCES series(id_serie)
+);
+
+
+7 - AVALIACOES
+
+CREATE TABLE avaliacoes (
+    id_avaliacao INT PRIMARY KEY,
+    id_usuario INT,
+    id_filme INT NULL,
+    id_serie INT NULL,
+    nota INT CHECK (nota BETWEEN 1 AND 10),
+    comentario TEXT,
+    data_avaliacao DATETIME NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    FOREIGN KEY (id_filme) REFERENCES filmes(id_filme),
+    FOREIGN KEY (id_serie) REFERENCES series(id_serie)
+);
+
+
+8 - VISUALIZACAO
+
+CREATE TABLE visualizacao (
+    id_visualizacao INT PRIMARY KEY ,
+    id_usuario INT,
+    id_filme INT NULL,
+    id_serie INT NULL,
+    id_episodio INT NULL,
+	data_inicio DATETIME NOT NULL,
+	data_fim DATETIME NOT NULL,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+    FOREIGN KEY (id_filme) REFERENCES filmes(id_filme),
+    FOREIGN KEY (id_serie) REFERENCES series(id_serie),
+    FOREIGN KEY (id_episodio) REFERENCES episodios(id_episodio)
+);
+
+
+################### ALIMENTANDO A TABELA
+
+
+1 - PLANOS
+
+INSERT INTO planos (id_plano, nome_plano, preco_mensal, resolucao, num_telas, descricao)
+VALUES 
+(1, 'Básico', 19.90, 'SD', 1, 'Plano básico com resolução padrão e apenas 1 tela.'),
+(2, 'Padrão', 29.90, 'HD', 2, 'Plano intermediário com resolução HD e até 2 telas simultâneas.'),
+(3, 'Premium', 49.90, '4K', 4, 'Plano premium com resolução 4K e até 4 telas simultâneas.');
+
+
+2 - SÉRIES
+
+INSERT INTO series (id_serie, titulo, ano_lancamento, genero, classificacao)
+VALUES 
+(1, 'Breaking Bad', 2008, 'Drama', '16'),
+(2, 'Stranger Things', 2016, 'Ficção Científica', '12'),
+(3, 'The Office', 2005, 'Comédia', '12');
+
+
+3 - FILMES
+
+INSERT INTO filmes (id_filme, titulo, duracao, ano_lancamento, genero, classificacao)
+VALUES 
+(1, 'Inception', 148, 2010, 'Ficção Científica', '14'),
+(2, 'Matrix', 136, 1999, 'Ação', '16'),
+(3, 'O Rei Leão', 88, 1994, 'Animação', 'Livre');
+
+
+4 - USUÁRIOS
+
+INSERT INTO usuarios (id_usuario, nome, email, senha, data_nasc, data_registro, id_plano)
+VALUES 
+(1, 'João Silva', 'joao.silva@email.com', 'senha123', '1990-05-12', '2023-01-15', 1),
+(2, 'Maria Oliveira', 'maria.oliveira@email.com', 'senha456', '1985-10-20', '2023-02-20', 3),
+(3, 'Pedro Santos', 'pedro.santos@email.com', 'senha789', '1992-08-18', '2023-03-10', 2);
+
+
+5 - PAGAMENTOS
+
+INSERT INTO pagamentos (id_pagamento, id_usuario, valor_pagamento, data_pagamento, metodo_pagamento)
+VALUES 
+(1, 1, 19.90, '2024-09-01 10:30:00', 'Cartão de Crédito'),
+(2, 2, 49.90, '2024-09-02 11:00:00', 'PayPal'),
+(3, 3, 29.90, '2024-09-03 09:45:00', 'Boleto');
+
+6 - EPSODIOS
+
+INSERT INTO episodios (id_episodio, id_serie, titulo, temporada, numero_epsodio, duracao)
+VALUES 
+(1, 1, 'Piloto', 1, 1, 58),
+(2, 1, 'Cat’s in the Bag...', 1, 2, 48),
+(3, 2, 'Capítulo Um: O Desaparecimento de Will Byers', 1, 1, 47),
+(4, 2, 'Capítulo Dois: A Estranha da Maple Street', 1, 2, 51),
+(5, 3, 'Pilot', 1, 1, 22),
+(6, 3, 'Diversity Day', 1, 2, 22);
+
+
+7 - AVALIACOES
+
+INSERT INTO avaliacoes (id_avaliacao, id_usuario, id_filme, id_serie, nota, comentario, data_avaliacao)
+VALUES 
+(1, 1, 1, NULL, 10, 'Filme incrível, realmente espetacular.', '2024-09-15 12:30:00'),
+(2, 2, NULL, 1, 9, 'Ótima série, recomendada.', '2024-09-16 13:45:00'),
+(3, 3, 2, NULL, 8, 'Muito bom, mas poderia ter mais ação.', '2024-09-17 14:00:00'),
+(4, 1, NULL, 2, 10, 'Stranger Things nunca decepciona!', '2024-09-18 15:20:00');
+
+
+
+8 - VISUALIZACAO
+
+INSERT INTO visualizacao (id_visualizacao, id_usuario, id_filme, id_serie, id_episodio, data_inicio, data_fim)
+VALUES 
+(1, 1, 1, NULL, NULL, '2024-09-01 18:00:00', '2024-09-01 20:30:00'),
+(2, 2, NULL, 1, 1, '2024-09-02 19:00:00', '2024-09-02 19:58:00'),
+(3, 3, 2, NULL, NULL, '2024-09-03 20:00:00', '2024-09-03 22:16:00'),
+(4, 1, NULL, 2, 1, '2024-09-04 21:00:00', '2024-09-04 21:47:00'),
+(5, 2, NULL, 3, 1, '2024-09-05 22:00:00', '2024-09-05 22:22:00');
