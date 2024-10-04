@@ -1,0 +1,46 @@
+
+
+--Esta consulta junta as tabelas usuarios e planos para exibir o nome dos usuários, o e-mail, e os detalhes dos planos (nome do plano e valor mensal).
+SELECT u.nome, u.email, p.nome_plano, p.preco_mensal 
+FROM usuarios u
+JOIN planos p ON u.id_usuario = p.id_plano;
+
+
+--Essa consulta utiliza JOIN entre as tabelas visualizacoes, usuarios e filmes para exibir o histórico de visualizações de filmes, mostrando o nome do usuário que assistiu e o título do filme.
+SELECT u.nome AS Usuario, f.titulo, v.id_visualizacao 
+FROM visualizacao v
+JOIN usuarios u ON v.id_usuario = u.id_usuario
+JOIN filmes f ON v.id_filme = f.id_filme
+WHERE v.id_filme IS NOT NULL;
+
+--Essa consulta junta as tabelas avaliacoes_filmes, usuarios, filmes para exibir o nome do usuário que avaliou e a nota que foi dada.
+SELECT u.nome AS Usuario, f.titulo As titulo, nota
+FROM avaliacoes
+JOIN usuarios u ON avaliacoes.id_usuario = u.id_usuario
+JOIN filmes f ON avaliacoes.id_filme = f.id_filme
+
+--Essa consulta junta as tabelas pagamentos, usuarios e planos para exibir o nome do usuário, o nome do plano e o método de pagamento utilizado.
+SELECT u.nome AS Usuario, p.nome_plano AS Plano, pa.metodo_pagamento AS Metodo_Pagamento, pa.data_pagamento AS Data
+FROM pagamentos pa
+JOIN usuarios u ON pa.id_usuario = u.id_usuario
+JOIN planos p ON pa.id_pagamento = p.id_plano;
+
+--Esta consulta junta as tabelas avaliacoes_filmes e usuarios e conta quantas avaliações cada usuário fez em filmes.
+SELECT u.nome AS Usuario, COUNT(id_avaliacao) AS avaliacoes
+FROM usuarios u
+JOIN avaliacoes ON u.id_usuario = avaliacoes.id_usuario
+GROUP BY u.nome;
+
+--Essa consulta utiliza JOIN entre as tabelas visualizacoes, usuarios e filmes para contar quantos filmes cada usuário assistiu.
+SELECT u.nome AS Usuario, COUNT(v.id_visualizacao) AS Total_Filmes_Assistidos
+FROM usuarios u
+JOIN visualizacao v ON u.id_usuario = v.id_usuario
+JOIN filmes f ON v.id_filme = f.id_filme
+WHERE v.id_filme IS NOT NULL
+GROUP BY u.nome;
+
+--Essa consulta utiliza JOIN entre as tabelas episodios e series para contar o número total de episódios em cada série.
+SELECT episodios.titulo AS Serie, COUNT(episodios.id_episodio) AS Total_Episodios
+FROM episodios
+JOIN series s ON s.id_serie = s.id_serie 
+GROUP BY episodios.titulo;
